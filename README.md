@@ -1,68 +1,60 @@
-# AWS & Cloud Infrastructure Course
+# AWS CLI + Floci — USMS Course Project
 
-This repository contains my laboratory work and practical reports for the **AWS & Cloud Infrastructure course**.
+Infrastructure for the **University Student Management System (USMS)**, built lab by lab
+with the AWS CLI against [Floci](https://floci.io), a local AWS emulator.
 
-All laboratories are part of one continuous project: the **University Student Management System (USMS)**. Throughout the course, I will progressively build the cloud infrastructure for USMS using different **AWS services**, with all practical work performed locally on my own laptop using the **AWS CLI**.
+This repository contains my laboratory work and practical reports for the AWS & Cloud Infrastructure course.
+
+All laboratories are part of one continuous project: the University Student Management System (USMS). Throughout the course, I will progressively build the cloud infrastructure for USMS using different AWS services, with all practical work performed locally on my own laptop using the AWS CLI.
 
 ## Project Scenario
 
 USMS is a web application designed to:
 
-* Manage student records
-* Upload and store transcripts
-* Send enrollment notifications
-* Generate student reports
+- Manage student records
+- Upload and store transcripts
+- Send enrollment notifications
+- Generate student reports
 
 Each laboratory focuses on a specific AWS service or cloud infrastructure concept and contributes to the overall USMS project.
 
-## Repository Structure
+## Quick start
 
-```text
-aws-floci-course/
-├── README.md                  
-├── .gitignore                 
-├── docker-compose.yml         
-├── .env                       
-│
-├── labs/                      # one folder per laboratory
-│   └── lab-01-iam/
-│       └── README.md           # your notes + evidence for this lab
-|       ├── lab-02/ 
-|       ├── lab-03/ 
-|       ├── ...        
-│
-├── policies/                  
-│   ├── usms-developer-base-policy.json
-│   ├── usms-student-data-rw-policy.json
-│   ├── usms-assume-app-roles-policy.json
-│   ├── usms-self-manage-credentials.json
-│   ├── usms-lambda-basic-policy.json
-│   ├── trust-ec2.json
-│   ├── trust-lambda.json
-│   └── trust-account-developers.json
-│
-├── configs/                   # non-secret configuration (committed)
-│   ├── course.env             
-│   └── lab-01.env             
-│
-├── scripts/
-│   ├── setup/                 # bring the environment up and down
-│   │   ├── floci-up.sh
-│   │   └── floci-down.sh
-│   ├── utilities/             # small helpers reused all course
-│   │   ├── whoami.sh
-│   │   ├── floci-storage-check.sh
-│   │   └── verify-lab-01.sh
-│   └── cleanup/               # careful, controlled teardown
-│       ├── floci-prune-volumes.sh
-│       └── lab-01-cleanup.sh
-│
-├── templates/                 # CLI skeletons, CloudFormation (later labs)
-├── outputs/                   # command output + SECRETS (never committed)
-│   └── .gitkeep
-├── screenshots/               # evidence for your lab report
-└── notes/                     # your own learning notes
-    └── lab-01-notes.md
+```bash
+source configs/course.env
+./scripts/setup/floci-up.sh
+./scripts/utilities/whoami.sh
 ```
+
+## Daily workflow
+
+```bash
+./scripts/setup/floci-up.sh      # start or resume (idempotent)
+# ... lab work ...
+./scripts/setup/floci-down.sh    # pause; state is kept
+```
+
+## Never run these
+
+| Command | Why |
+|---|---|
+| `docker compose down -v` | `-v` deletes volumes |
+| `docker volume prune` | Unfiltered; use scripts/cleanup/floci-prune-volumes.sh |
+| `floci start ...` | Bypasses Compose; disables persistence |
+| `rm -rf ~/floci-data` | That directory is the IAM state |
+
+## Labs
+
+| Lab | Topic | Status |
+|-----|-------|--------|
+| 01  | IAM   | [x] complete |
+| 02  | VPC   | [ ] not started |
+
+## Conventions
+
+- All resources are prefixed `usms-`
+- Region: `us-east-1`  ·  Floci account: `000000000000`
+- Storage mode: `hybrid`, bind-mounted to `~/floci-data`
+- Secrets live in `outputs/` and are **never** committed
 
 > **Note:** This repository is created for academic and learning purposes as part of the AWS & Cloud Infrastructure course.
