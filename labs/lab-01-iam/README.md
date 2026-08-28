@@ -1,12 +1,12 @@
 Format of report
-1. Aim / Objective¶
+1. Aim / Objective
 
 State the objective(s) of this practical exercise.
 
     Example:
     To create and manage IAM users, groups, and policies using the AWS CLI and verify access permissions.
 
-2. Introduction¶
+2. Introduction
 
 Provide a brief overview of the AWS service explored during this practical (1 paragraph).
 
@@ -17,7 +17,7 @@ Include:
     Importance in cloud computing
     Typical applications
 
-3. Use Case¶
+3. Use Case
 
 Describe where this AWS service is commonly used.
 
@@ -27,7 +27,7 @@ Describe where this AWS service is commonly used.
         Hosting scalable web applications using Amazon EC2.
         Storing application assets using Amazon S3.
 
-4. System Architecture / Design (If Applicable)¶
+4. System Architecture / Design (If Applicable)
 
 Insert a system architecture or workflow diagram illustrating how the AWS services interact.
 
@@ -40,11 +40,12 @@ The diagram should clearly indicate:
 
     Insert architecture diagram here
 
-5. Implementation Procedure¶
+5. Implementation Procedure
 
 Breifly Document each step performed during the practical.
-6. Results and Evidence¶
-6.1 CLI / SDK Output¶
+
+6. Results and Evidence  
+6.1 CLI / SDK Output
 
 Include screenshots showing:
 
@@ -54,7 +55,7 @@ Include screenshots showing:
 
     Insert screenshot(s) here
 
-6.2 AWS Management Console Verification¶
+6.2 AWS Management Console Verification
 
 Provide screenshots from the AWS Console confirming successful resource creation or configuration and give one line explanation of the action performed.
 
@@ -69,7 +70,7 @@ Examples include:
 
     Insert screenshot(s) here
 
-7. Analysis and Discussion¶
+7. Analysis and Discussion
 
 Discuss the outcomes of the practical.
 
@@ -81,7 +82,7 @@ Include:
     How were the issues resolved?
     What observations were made during implementation?
 
-8. Reflection¶
+8. Reflection
 
 Reflect on your learning experience by answering the following questions:
 
@@ -90,7 +91,7 @@ Reflect on your learning experience by answering the following questions:
     How would you apply this service in a real-world cloud environment?
     What additional concepts or features would you like to explore?
 
-9. Conclusion¶
+9. Conclusion
 
 Summarise the practical in one or two paragraphs.
 
@@ -101,7 +102,7 @@ Include:
     Skills developed
     Importance of the AWS service
 
-10. Appendix (Optional)¶
+10. Appendix (Optional)
 
 Include links to any supplementary materials, such as:
 
@@ -113,7 +114,7 @@ Include links to any supplementary materials, such as:
     Error logs
     Configuration files
 
-Submission Checklist¶
+Submission Checklist
 
 Before submitting your report, ensure that you have included:
 
