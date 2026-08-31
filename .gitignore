@@ -10,7 +10,7 @@ outputs/*
 
 # ---- Generated Compose configuration ----
 # floci-up.sh writes this. It holds machine-specific absolute paths.
-.env
+
 .env.local
 
 # ---- Emulator state ----
@@ -30,3 +30,4 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+.env
