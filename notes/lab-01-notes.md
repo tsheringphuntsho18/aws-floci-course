@@ -1,18 +1,22 @@
-# Notes
+# Lab 01 Notes: Identity and Access Management¶
 
-In `memory` mode, Floci treats its state as disposable, so `--persist` only provides a mounted directory without enabling durable storage. As a result, Floci writes very little persistent data there and cleans up the Docker volumes it creates when the environment is torn down.
+## 1. Floci Configuration & Persistence
 
-# Lab 01 Prediction: IAM Authorization Details
-### Step 32 — Policy Simulator Prediction
+- **memory Mode Behavior:** Floci treats its state as disposable in this mode.
+- **--persist Flag:** Only provides a mounted directory; it does not
+enable durable storage.
+- **Data & Storage Impact:** Floci writes minimal persistent data to the mounted directory and automatically cleans up its created Docker volumes upon environment teardown.
 
-For `usms-audit-01`, I predict that `ec2:CreateVpc` will result in **implicitDeny** because the audit user does not have a policy statement allowing VPC creation.
+## 2. IAM Authorization Details
 
-I also predict that `ec2:DescribeVpcs` will be **allowed** if the audit policy contains an Allow statement for this action; otherwise, it will result in **implicitDeny**. The policy simulator distinguishes between an explicit deny, where a Deny statement directly blocks an action, and an implicit deny, where no policy grants permission.
+> **Key Distinction:** The AWS Policy Simulator differentiates between:
+> * **Implicit Deny:** Default state when no policy explicitly grants permission.
+> * **Explicit Deny:** Triggered when a `Deny` statement directly blocks the action (overrides any `Allow`).
 
-### Floci Snapshot Limitation
 
-I attempted to save the completed Lab 01 state using:
+## 3. Tool Issue: Floci Snapshot Limitation
 
-`floci snapshot save lab-01-iam-complete`
-
-However, Floci returned an HTTP 400 error. The `floci snapshot list` command also reports that the Snapshot API is not available on the current server version (1.7.0). Therefore, the snapshot could not be created even though the Floci CLI is up to date.
+* **Action Attempted:** `floci snapshot save lab-01-iam-complete`
+* **Result:** Failed with an **HTTP 400 error**.
+* **Root Cause:** Running `floci snapshot list` confirmed that the **Snapshot API is unavailable** on the active server version (`1.7.0`), even though the local Floci CLI is up to date.
+* **Impact:** State for completed Lab 01 could not be saved via snapshot.
