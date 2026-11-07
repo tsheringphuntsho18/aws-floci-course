@@ -47,8 +47,15 @@ source configs/course.env
 
 | Lab | Topic | Status |
 |-----|-------|--------|
-| 01  | IAM   | [x] complete |
-| 02  | VPC   | [ ] not started |
+| 01  | IAM   | completed |
+| 02  | VPC   | completed |
+| 03  | EC2   | in progress |
+| 04  | ECS   | not started |
+| 05  | ALB   | not started |
+| 06  | AutoScaling   | not started |
+| 07  | EKS   | not started |
+| 08  | EKS Scaling   | not started |
+| 09  | Secirity   | not started |
 
 ## Conventions
 
