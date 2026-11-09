@@ -49,8 +49,8 @@ source configs/course.env
 |-----|-------|--------|
 | 01  | IAM   | completed |
 | 02  | VPC   | completed |
-| 03  | EC2   | in progress |
-| 04  | ECS   | not started |
+| 03  | EC2   | completed |
+| 04  | ECS   | in progress |
 | 05  | ALB   | not started |
 | 06  | AutoScaling   | not started |
 | 07  | EKS   | not started |
