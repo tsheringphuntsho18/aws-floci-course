@@ -20,8 +20,9 @@ aws ec2 describe-instances --filters "Name=tag:Tier,Values=admin" "Name=instance
   --query 'Reservations[].Instances[].{Name:Tags[?Key==`Name`]|[0].Value,AZ:Placement.AvailabilityZone,Profile:IamInstanceProfile.Arn}' \
   --output table
 ```
+![image](/screenshots/lab-3-ec2/e1.png)
 
-Expected: exactly one running instance in `us-east-1b`, with no instance profile. Do not add it to `configs/lab-03.env`; Exercise 4 removes it. (`$USMS_BASE_AMI` is saved in `lab-03.env`; use `$AMI_ID` if you have not sourced it.)
+Exactly one running instance in `us-east-1b`, with no instance profile. 
 
 ## Exercise 2 – Intermediate: a self-describing bootstrap
 
@@ -70,6 +71,8 @@ diff labs/lab-03-ec2/user-data-db.sh outputs/lab-03-userdata-db.sh && echo "USER
 
 **When can a re-run actually happen?** User data runs once per instance, so a normal reboot will not re-run it. It can run again when a new instance is launched from an AMI captured from an already-bootstrapped instance, because cloud-init sees a new instance ID. Here the marker file in the AMI makes the script exit early instead of re-initialising a database. It can also re-run if someone runs `cloud-init clean`, or if the script is placed in a per-boot hook.
 
+![image](/screenshots/lab-3-ec2/e2.png)
+
 ## Exercise 3 – Problem solving: a reachability report
 
 `scripts/utilities/lab-03-reachability.sh`:
@@ -117,12 +120,13 @@ bash -n scripts/utilities/lab-03-reachability.sh && echo "syntax OK"
 (cd ~ && ~/aws-floci-course/scripts/utilities/lab-03-reachability.sh)
 (cd ~/aws-floci-course/labs/lab-03-ec2 && ../../scripts/utilities/lab-03-reachability.sh)
 ```
+![image](/screenshots/lab-3-ec2/e3.png)
 
-Expected: identical output from both directories, with `usms-web-01` REACHABLE, `usms-db-01` UNREACHABLE, and any instance in a public subnet without an address NO-ADDRESS. A subnet with no explicit route table association uses the main route table, which has no `0.0.0.0/0` route, so it is correctly classified UNREACHABLE. The verdict uses only the route table, public address and security group, never names or tags.
+Identical output from both directories, with `usms-web-01` REACHABLE, `usms-db-01` UNREACHABLE, and any instance in a public subnet without an address NO-ADDRESS. A subnet with no explicit route table association uses the main route table, which has no `0.0.0.0/0` route, so it is correctly classified UNREACHABLE. The verdict uses only the route table, public address and security group, never names or tags.
 
 ## Exercise 4 – Challenge: right-size and clean up
 
-**Analysis (adapt with your own numbers).**
+**Analysis**
 
 *Scale up or out.* The load is mostly reads, with a midday peak and idle nights, and it currently runs on one `t3.micro` at 85% CPU. Scaling up (a larger single instance) is simple but leaves a single point of failure and still pays for the larger size overnight. Scaling out (two or more small instances behind a load balancer, later in an Auto Scaling group) handles read-heavy traffic, survives the loss of one instance or AZ, and allows scale-in overnight, which is the only option that reduces the idle cost. I would scale out, and use the golden AMI as the launch template image.
 
@@ -184,8 +188,7 @@ aws ec2 describe-addresses \
 # release only a leftover test address, never usms-web-eip or usms-nat-eip:
 # aws ec2 release-address --allocation-id <eipalloc-id>
 ```
-
-Afterwards run `./scripts/utilities/verify-lab-03.sh` and confirm `FAIL=0`.
+![image](/screenshots/lab-3-ec2/e4.png)
 
 ## Exercise 5 – Integration: prepare the S3 hand-off for Lab 4
 
@@ -247,3 +250,4 @@ Expected: a 404 / `NoSuchBucket` style error and a non-zero exit code. That fail
 ```bash
 grep USMS_BUCKET_NAME configs/lab-01.env || echo 'export USMS_BUCKET_NAME=usms-student-data' >> configs/lab-03.env
 ```
+![image](/screenshots/lab-3-ec2/e5.png)

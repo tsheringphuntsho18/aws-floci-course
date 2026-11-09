@@ -36,8 +36,7 @@ Amazon Elastic Compute Cloud (EC2) provides resizable virtual servers in the clo
 
 ## 4. System Architecture 
 
-> **[Insert architecture diagram here – the course diagram (`lab03-ec2-architecture.png`) or your own draw.io version]**
-
+![image](/screenshots/lab-3-ec2/architecture.jpeg)
 
 Data flow: browser to Elastic IP to `usms-web-01` (TCP 80); `usms-web-01` to `usms-db-01` (TCP 5432, allowed by security group reference); `usms-db-01` outbound via `usms-nat`.
 
@@ -74,83 +73,94 @@ Wiring between tiers was proven by reading back security groups and routes, a st
 
 **Screenshot 1** – Resume check: three env files loaded, six values non-empty, `verify-lab-02.sh` `FAIL=0`
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s1.png)
 
 **Screenshot 2** – AMI selection and which option was used (`describe-images` / `register-image` / placeholder)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s2.png)
 
 **Screenshot 3** – Key pair created, file permissions `-rw-------`, `git check-ignore -v` output
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s3.png)
 
 **Screenshot 4** – `user-data.sh` syntax OK and `run-instances` request JSON validated
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s4.png)
 
 **Screenshot 5** – Launch of `usms-web-01` and `wait instance-running`
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s5.png)
 
 **Screenshot 6** – `describe-instances` table (Checkpoint 2)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s6.png)
 
 **Screenshot 7** – Permission chain trace (Step 11)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s7.png)
 
 **Screenshot 8** – `USER DATA PROVEN` (Checkpoint 3)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s8.png)
 
 **Screenshot 9** – Elastic IP allocate, associate and describe
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s9.png)
 
 **Screenshot 10** – Application test and the six reachability checks (Step 14)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s10.png)
 
 **Screenshot 11** – EBS volume attached, two volumes with `DeleteOnTermination` values
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s11.png)
 
 **Screenshot 12** – `usms-db-01` private, no public address, no profile (Step 16)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s12.png)
 
 **Screenshot 13** – `WIRING PROVEN` (Checkpoint 5)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s13.png)
 
 **Screenshot 14** – Stop/start address behaviour (Step 18)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s14.png)
 
 **Screenshot 15** – `PERSISTENCE PROVEN` (Checkpoint 6)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s15.png)
 
 **Screenshot 16** – Golden AMI `available`
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s16.png)
 
 **Screenshot 17** – `verify-lab-03.sh` result (`FAIL=0`, or the documented benign failures)
 
-> *(Insert screenshot here)*
+![image](/screenshots/lab-3-ec2/s17.png)
 
 ### 6.2 AWS Console / API Verification
 
-Floci has no AWS Management Console, so verification uses `describe-*` output. Replace with console screenshots if your setup provides one.
+Floci has no AWS Management Console, so verification uses `describe-*` output. 
 
-| Resource | What it confirms | Screenshot |
-|---|---|---|
-| Instances (`usms-web-01`, `usms-db-01`) | Running, correct subnets, security groups, tags | *(Insert screenshot here)* |
-| Key pair `usms-app-key` | Exists; fingerprint returned, no private key | *(Insert screenshot here)* |
-| Elastic IP `usms-web-eip` | Allocated and associated with `usms-web-01` | *(Insert screenshot here)* |
-| Volumes | Root and data volume; data volume survives termination | *(Insert screenshot here)* |
-| AMI `usms-web-golden` | State `available`, tagged `Project=USMS` | *(Insert screenshot here)* |
+**Instances (`usms-web-01`, `usms-db-01`)**  
+Running, correct subnets, security groups, tags
+![image](/screenshots/lab-3-ec2/a1.png)
+
+**Key pair `usms-app-key`**  
+Exists; fingerprint returned, no private key
+![image](/screenshots/lab-3-ec2/a2.png)
+
+**Elastic IP `usms-web-eip`**  
+Allocated and associated with `usms-web-01`
+
+**Volumes**  
+Root and data volume; data volume survives termination
+
+**AMI `usms-web-golden`**  
+State `available`, tagged `Project=USMS`
+
+
 
 ## 7. Analysis and Discussion
 
@@ -161,8 +171,6 @@ Observations specific to Floci:
 - User data was stored and round-tripped byte-for-byte, but it does not execute: Floci boots no operating system, and the lab notes the AMI is Amazon Linux 2 (`yum`) while the script uses `dnf`. 
 - Instances reached `running` almost instantly, unlike the 30–60 seconds on real AWS.
 - The instance cannot fetch IAM credentials from the metadata service (IMDS is not served), so only the association is verifiable.
-- [Fill in: whether the public address was cleared on stop, and whether `usms-db-01` received a public address despite the subnet setting.]
-- [Fill in: AZ-mismatch volume test result (Step 15 "Your turn"): accepted or rejected by Floci.]
 
 Errors encountered and how they were resolved:
 
@@ -194,10 +202,17 @@ The practical built skills in reviewable request files with `--cli-input-json`, 
 
 - `labs/lab-03-ec2/user-data.sh`
 - `templates/lab-03-run-instances.json`
+- `templates/lab-03-run-instances-full.json`
 - `configs/lab-03.env`
 - `outputs/lab-03-instance-policy.json`
+- `outputs/lab-03-post-restart.txt`
+- `outputs/lab-03-pre-restart.txt`
+- `outputs/lab-03-exposure-report.txt`
+- `outputs/lab-03-userdata.b64`
+- `outputs/lab-03-userdata.sh`
 - `scripts/utilities/verify-lab-03.sh`
 - `scripts/cleanup/lab-03-cleanup.sh` (not run)
 - `notes/lab-03-notes.md`
 - `labs/lab-03-ec2/exercises.md`
+- `screenshots/lab-3-ec2`
 
