@@ -1,0 +1,17 @@
+Lab 04 -> Lab 03 security group linkage
+Generated: 2026-11-11T17:36:38Z
+
+usms-enrolment-sg           : sg-dc99d52c9d3a6bdc6
+only inbound source group   : sg-3e3d7542babf4b621  (expected usms-app-sg = sg-3e3d7542babf4b621)
+running instances carrying  : none  (count=0)
+Lab 03 USMS_WEB_INSTANCE    : i-1a2d382eb3d7b622e
+VERDICT                     : MISMATCH
+
+This rule is temporary: Lab 05 removes the usms-app-sg -> usms-enrolment-sg tcp/80 rule
+once the Application Load Balancer becomes the only caller of the enrolment service.
+
+== Tag audit (Project=USMS) ==
+-- arn:aws:ecs:us-east-1:000000000000:cluster/usms-ecs-cluster
+   NO TAGS STORED (build accepted --tags without storing them)
+-- arn:aws:ecs:us-east-1:000000000000:service/usms-ecs-cluster/usms-enrolment-svc
+   NO TAGS STORED (build accepted --tags without storing them)

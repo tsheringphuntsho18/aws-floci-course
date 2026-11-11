@@ -6,7 +6,6 @@
 # ---- Command output and SECRETS ----
 # NOTE the trailing /* — see the explanation below. It matters.
 outputs/*
-!outputs/.gitkeep
 
 # ---- Generated Compose configuration ----
 # floci-up.sh writes this. It holds machine-specific absolute paths.
