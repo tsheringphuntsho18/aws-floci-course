@@ -1,0 +1,6 @@
+[
+  {
+    "Field": "path-pattern",
+    "PathPatternConfig": { "Values": ["/results", "/results/*"] }
+  }
+]

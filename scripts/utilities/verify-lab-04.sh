@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # Verify every Lab 04 artefact exists and is configured correctly.
 # Exit 1 if anything is missing. Read-only; safe to run at any time.
+#
+# Expected result: PASS=39  FAIL=0   (39 checks; was 38 before Lab 05 Exercise 2)
+# Lab 05 Step 13 moved usms-enrolment-sg's only source from usms-app-sg to
+# usms-alb-sg. The networking check below asserts the PROPERTY (tcp/80 is admitted
+# only from a named security group, never a CIDR) against the current expected
+# group, and a second check proves the old source is gone. usms-alb-sg's ID is read
+# from configs/lab-05.env; without that file the check fails readably, not abort.
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -10,6 +17,7 @@ source "$REPO_ROOT/configs/lab-01.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-02.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-03.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-04.env" 2>/dev/null || true
+source "$REPO_ROOT/configs/lab-05.env" 2>/dev/null || true   # optional: absent before Lab 05
 
 : "${USMS_APP_SG:=none}"
 : "${USMS_PRIVATE_SUBNET_A:=none}"
@@ -22,6 +30,7 @@ source "$REPO_ROOT/configs/lab-04.env" 2>/dev/null || true
 : "${USMS_ECS_EXEC_ROLE:=usms-ecs-exec-role}"
 : "${USMS_ECS_TASK_ROLE:=usms-ecs-task-role}"
 : "${USMS_LOG_GROUP_ENROLMENT:=/usms/ecs/enrolment}"
+: "${USMS_ALB_SG:=none}"     # set by configs/lab-05.env; "none" gives a readable FAIL under set -u
 
 PASS=0; FAIL=0
 check() {
@@ -93,8 +102,10 @@ check "service desiredCount is 2 (one task per Availability Zone)" \
 
 echo "== Lab 04 networking =="
 check "usms-enrolment-sg exists"  "aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG"
-check "usms-enrolment-sg is sourced from usms-app-sg (not a CIDR)" \
-  "test \"\$(aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[0].UserIdGroupPairs[0].GroupId' --output text)\" = $USMS_APP_SG"
+check "usms-enrolment-sg tcp/80 is sourced from a group (not a CIDR), and that group is usms-alb-sg" \
+  "test \"\$(aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[?FromPort==\`80\`].UserIdGroupPairs[].GroupId' --output text)\" = $USMS_ALB_SG && test -z \"\$(aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[?FromPort==\`80\`].IpRanges[].CidrIp' --output text)\""
+check "usms-app-sg is NO LONGER a source on usms-enrolment-sg (Lab 05 cutover)" \
+  "! aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].UserIdGroupPairs[].GroupId' --output text | grep -qw $USMS_APP_SG"
 check "usms-enrolment-sg admits NOTHING from 0.0.0.0/0" \
   "! aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].IpRanges[].CidrIp' --output text | grep -q '0.0.0.0/0'"
 

@@ -84,7 +84,7 @@ check "usms-s3-endpoint exists"       "aws ec2 describe-vpc-endpoints --vpc-endp
 
 echo "== Tagging =="
 check "every Lab 02 resource carries Project=USMS" \
-  "test \"\$(aws ec2 describe-tags --filters Name=tag:Project,Values=USMS Name=key,Values=Name --query 'length(Tags)' --output text)\" -ge 10"
+  "test \"\$(aws ec2 describe-tags --filters Name=key,Values=Project Name=value,Values=USMS --query 'length(Tags)' --output text)\" -ge 10"
 
 echo "== Files and Git hygiene =="
 check "configs/lab-02.env exists"     "test -f configs/lab-02.env"
