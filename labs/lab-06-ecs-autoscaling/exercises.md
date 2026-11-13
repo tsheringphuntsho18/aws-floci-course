@@ -129,7 +129,7 @@ alarm state forced to ALARM
 
 **Clean-up, in dependency order, each with the four-line admonition:**
 
-> ⚠️ **Read before running any delete command**
+> **Read before running any delete command**
 > **What will be deleted:** the CloudWatch alarm `usms-enrolment-queue-low`.
 > **What depends on it:** the step-in policy's only trigger; deleting the alarm first (before the policy) leaves no dangling reference either way, since CloudWatch alarms and Application Auto Scaling policies are independent objects linked only by ARN.
 > **Reversible? / Effect on later labs:** yes, `put-metric-alarm` with the same document restores it; no later lab uses either object.
@@ -139,7 +139,7 @@ aws cloudwatch set-alarm-state --alarm-name "$LOW_ALARM" --state-value OK --stat
 aws cloudwatch delete-alarms --alarm-names "$LOW_ALARM" && echo "deleted $LOW_ALARM"
 ```
 
-> ⚠️ **Read before running any delete command**
+> **Read before running any delete command**
 > **What will be deleted:** the step scaling policy `usms-enrolment-queue-step-in`.
 > **What depends on it:** nothing else; its alarm is already gone.
 > **Reversible? / Effect on later labs:** yes, `put-scaling-policy` with `templates/lab-06-step-scaling-in.json` restores it; no later lab uses it.
@@ -272,7 +272,7 @@ Assumptions stated explicitly: Fargate and CloudWatch pricing from AWS's publish
 
 ### The tidy-up
 
-> ⚠️ **Read before running any delete command**
+> **Read before running any delete command**
 > **What will be deleted:** `usms-enrolment-memory-target-tracking` (Exercise 1's practice policy) and its two managed alarms.
 > **What depends on it:** nothing; it is not referenced by any other policy, alarm, scheduled action, or verification script.
 > **Reversible? / Effect on later labs:** yes, `put-scaling-policy` with `templates/lab-06-target-tracking-memory.json` restores it; no later lab uses it.

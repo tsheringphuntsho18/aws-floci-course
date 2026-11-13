@@ -4,7 +4,7 @@
     Student ID: 02230310
     Module: DSO303 Cloud Native Solution Design
     Practical: Lab 06 – Implementing Auto Scaling for an ECS-Based Application
-    Date: 13/11/2026
+    Date: 12/11/2026
 
 ## 1. Aim / Objective
 
@@ -43,50 +43,7 @@ Other common uses elsewhere: an e-commerce checkout service scaling on request c
 
 ## 4. System Architecture / Design
 
-```
-                              Internet
-                                  |
-                                  v
-  ================================|=========================================
-  ||  usms-vpc  10.0.0.0/16       |                                       ||
-  ||   +--------------------------+--------------------------------+      ||
-  ||   | usms-public-subnet-a/-b      usms-enrolment-alb            |      ||
-  ||   |   usms-alb-sg   listener HTTP:80                           |      ||
-  ||   |     rule 10  /alb-health -> fixed 200                      |      ||
-  ||   |     default              -> usms-enrolment-tg              |      ||
-  ||   +--------------------------+--------------------------------+      ||
-  ||                              |  tcp/80 from usms-alb-sg ONLY         ||
-  ||                              v                                      ||
-  ||   +----------------------+   +----------------------+               ||
-  ||   | usms-private-subnet-a|   | usms-private-subnet-b|               ||
-  ||   | [task][task]..        |   | [task][task]..        |  <- 2..10   ||
-  ||   +----------------------+   +----------------------+               ||
-  ||                              ^                                      ||
-  ||   usms-ecs-cluster            | ECS starts/stops tasks so            ||
-  ||     usms-enrolment-svc        | runningCount matches desiredCount    ||
-  ||       desiredCount  <---------+-----------------------------+        ||
-  =============================================================|==========
-                                                                | writes ONE integer
-  Application Auto Scaling (THIS LAB)                           |
-  +------------------------------------------------------------|--------+
-  | scalable target  service/usms-ecs-cluster/usms-enrolment-svc        |
-  |   dimension ecs:service:DesiredCount   min 2   max 10 ---------------+
-  |                                                                      |
-  |   usms-enrolment-cpu-target-tracking        AWS/ECS CPU -> 50.0      |
-  |     +-- 2 managed alarms (AlarmHigh/AlarmLow), created FOR me        |
-  |   usms-enrolment-requests-target-tracking   ALBRequestCountPerTarget |
-  |     ResourceLabel app/usms-enrolment-alb/99a7b3736e494f3d/           |
-  |                    targetgroup/usms-enrolment-tg/399fd5d0493541f2    |
-  |   usms-enrolment-queue-step-out             StepScaling              |
-  |     +1 task  (breach 0-100)   +3 tasks (breach 100+)                 |
-  |     driven by MY alarm: usms-enrolment-queue-high                    |
-  |       USMS/Enrolment EnrolmentQueueDepth >= 100                      |
-  |   usms-enrolment-morning-scale-out / -evening-scale-in (scheduled)   |
-  |     NOT SUPPORTED on this Floci build (UnsupportedOperation)         |
-  |   suspension: DynamicScalingIn/Out/Scheduled - 3 independent switches|
-  +-----------------------------------------------------------------------+
-  Identity: AWSServiceRoleForApplicationAutoScaling_ECSService
-```
+
 
 *Figure 1 – Application Auto Scaling sits entirely above Lab 04's ECS service and Lab 05's load balancer, and changes nothing about either: it only ever writes `desiredCount`.*
 
@@ -253,17 +210,3 @@ Files in the repository:
 - `labs/lab-06-ecs-autoscaling/exercises.md`
 - `notes/lab-06-notes.md` — support path, Floci deviations, review questions
 - `outputs/lab-06-pre-restart.txt`, `-post-restart.txt`, `-pre-verify-05.txt`, `-post-verify-05.txt`, `-scaling-history.json`, `-scale-latency.txt`, `-lab10-readiness.txt`, `-scaling-report.json` (git-ignored; kept until submission/Lab 10)
-
-**Checklist**
-
-- [x] Scalable target registered: min 2, max 10, `ecs:service:DesiredCount`
-- [x] Two target tracking policies, with managed alarms read back
-- [x] Step scaling policy with an open-ended top interval, driven by a self-written alarm
-- [x] Scheduled actions specified; build limitation confirmed and documented, not hidden
-- [x] Autonomous scale-out observed and proven with a `Cause` string naming the alarm and the policy
-- [x] Suspend/resume exercised without disturbing any policy
-- [x] Persistence proven across a Floci restart, every identifier re-derived
-- [x] `configs/lab-06.env` committed, fully populated
-- [x] `verify-lab-06.sh` built and run; all failures documented as benign
-- [x] Five Independent Lab Exercises completed
-- [x] KEEP vs CLEAN UP and Preparation for the Next Lab sections not executed, per instructions

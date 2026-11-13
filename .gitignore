@@ -30,3 +30,6 @@ Thumbs.db
 .vscode/
 .idea/
 .env
+
+scripts/capture.py
+CLAUDE.md
