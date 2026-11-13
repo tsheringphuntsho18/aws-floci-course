@@ -54,8 +54,8 @@ source configs/course.env
 | 05  | ALB   | completed |
 | 06  | AutoScaling   | completed |
 | 07  | EKS   | completed |
-| 08  | EKS Scaling   | in progress |
-| 09  | Security   | not started |
+| 08  | EKS Scaling   | completed |
+| 09  | Security   | in progress |
 | 10  | Lambda   | not started |
 | 11  | CI/CD Pipeline   | not started |
 | 12  | ECS Pipeline Deploy   | not started |
