@@ -52,8 +52,8 @@ source configs/course.env
 | 03  | EC2   | completed |
 | 04  | ECS   | completed |
 | 05  | ALB   | completed |
-| 06  | AutoScaling   | in progress |
-| 07  | EKS   | not started |
+| 06  | AutoScaling   | completed |
+| 07  | EKS   | in progress |
 | 08  | EKS Scaling   | not started |
 | 09  | Secirity   | not started |
 

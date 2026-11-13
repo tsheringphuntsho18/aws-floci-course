@@ -43,7 +43,7 @@ Other common uses elsewhere: an e-commerce checkout service scaling on request c
 
 ## 4. System Architecture / Design
 
-
+![image](/screenshots/lab-6-autoscaling/architecture.jpeg)
 
 *Figure 1 – Application Auto Scaling sits entirely above Lab 04's ECS service and Lab 05's load balancer, and changes nothing about either: it only ever writes `desiredCount`.*
 
