@@ -160,6 +160,8 @@ Other common uses of this exact shape elsewhere: a checkout gateway proxying to 
 
 Floci is driven entirely through the CLI on this build, so console-equivalent evidence is each resource's own read-back, already shown above:
 
+![image](/screenshots/lab-7-eks/eks.png)
+
 | Evidence | One-line explanation |
 |---|---|
 | `eks describe-cluster` | `usms-eks-cluster`, ACTIVE, k8s 1.30, four subnets, `_lb_ports_=8081,8082`, a real OIDC issuer |

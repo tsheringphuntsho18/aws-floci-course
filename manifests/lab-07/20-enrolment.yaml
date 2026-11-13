@@ -49,6 +49,8 @@ spec:
         project: usms
         tier: app
     spec:
+      nodeSelector:
+        workload: usms
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -118,16 +120,3 @@ spec:
     - name: http
       port: 80
       targetPort: http
----
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: usms-enrolment-pdb
-  namespace: usms
-  labels:
-    app: usms-enrolment
-spec:
-  minAvailable: 1
-  selector:
-    matchLabels:
-      app: usms-enrolment

@@ -50,7 +50,7 @@ metadata:
     project: usms
     tier: web
 spec:
-  replicas: 1
+  replicas: 2
   revisionHistoryLimit: 5
   selector:
     matchLabels:
@@ -62,6 +62,13 @@ spec:
         project: usms
         tier: web
     spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: usms-gateway
       containers:
         - name: gateway
           image: nginx:1.27-alpine
@@ -96,19 +103,6 @@ spec:
         - name: conf
           configMap:
             name: usms-gateway-conf
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: usms-gateway
-  namespace: usms
-  labels:
-    app: usms-gateway
-spec:
-  type: ClusterIP
-  selector:
-    app: usms-gateway
-  ports:
-    - name: http
-      port: 80
-      targetPort: http
+# Service for usms-gateway is defined in manifests/lab-08/50-service-loadbalancer.yaml
+# (Exercise/Step 15 turned it into a LoadBalancer Service); not duplicated here to
+# avoid two files fighting over the same object.
