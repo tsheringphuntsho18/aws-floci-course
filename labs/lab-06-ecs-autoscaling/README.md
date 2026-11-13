@@ -138,6 +138,8 @@ Other common uses elsewhere: an e-commerce checkout service scaling on request c
 
 Floci is driven entirely through the CLI, so the console-equivalent evidence is each resource's own read-back:
 
+![image](/screenshots/lab-6-autoscaling/autoscaling.png)
+
 | Evidence | One-line explanation |
 |---|---|
 | `application-autoscaling describe-scalable-targets` | One target, `service/usms-ecs-cluster/usms-enrolment-svc`, `ecs:service:DesiredCount`, min 2 max 10, all suspension switches false |

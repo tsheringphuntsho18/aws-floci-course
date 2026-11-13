@@ -22,7 +22,7 @@
 - Capture all required terminal evidence using `python3 scripts/capture.py <path> "<command>"` (generates `.png` files only; do not create `.txt` files).
 - Main implementation & verification steps: `screenshots/<lab-folder>/s1.png`, `s2.png`, `s3.png`, ...
 - Independent Lab Exercises steps: `screenshots/<lab-folder>/e1.png`, `e2.png`, `e3.png`, ...
-- Embed images using valid relative paths from each markdown file (e.g., `../../screenshots/<lab-folder>/s1.png`).
+- Embed images using valid relative paths from each markdown file (e.g., `/screenshots/<lab-folder>/s1.png`).
 
 ## Three-File Documentation Structure (Direct Disk Writes)
 Use your file-editing tools to create and write these three files directly on disk (matching the formatting and style of existing Labs 01–05):

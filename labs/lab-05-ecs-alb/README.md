@@ -159,6 +159,8 @@ Other common uses include e-commerce sites routing `/api` and `/static` to diffe
 
 Floci is driven through the CLI, so the console-equivalent evidence is each resource's read-back.
 
+![image](/screenshots/lab-5-alb/elb.png)
+
 | Evidence | One-line explanation |
 |---|---|
 | `elbv2 describe-load-balancers` | The ALB is internet-facing, type application, active, in two AZs, carrying `usms-alb-sg` |
