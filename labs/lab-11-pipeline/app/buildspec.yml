@@ -1,0 +1,90 @@
+version: 0.2
+
+env:
+  variables:
+    SERVICE_NAME: "enrolment"
+    ARTIFACT_DIR: "dist"
+
+phases:
+
+  install:
+    commands:
+      - echo "--- install ---"
+      - python3 --version
+      - sed --version 2>/dev/null | head -1 || echo "BSD sed"
+
+  pre_build:
+    commands:
+      - echo "--- pre_build ---"
+      - test -f VERSION || { echo "VERSION file is missing"; exit 1; }
+      - python3 -m json.tool config/service.json > /dev/null
+      - |
+        python3 -c "
+        import json, sys
+        EXPECTED_CONTAINER = 'enrolment-api'
+        cfg = json.load(open('config/service.json'))
+        actual = cfg.get('container')
+        if actual != EXPECTED_CONTAINER:
+            print(f'config/service.json names the wrong container: expected \"{EXPECTED_CONTAINER}\", found \"{actual}\"')
+            sys.exit(1)
+        "
+      - |
+        grep -q '"port": 80' config/service.json || {
+          echo "config/service.json does not expose port 80 - fix the port field before re-running the build"
+          exit 1
+        }
+      - echo "configuration validated"
+
+  build:
+    commands:
+      - echo "--- build ---"
+      - USMS_RELEASE="$(tr -d '[:space:]' < VERSION)"
+      - BUILT_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      - echo "release=$USMS_RELEASE builtAt=$BUILT_AT"
+      - rm -rf "$ARTIFACT_DIR"
+      - mkdir -p "$ARTIFACT_DIR"
+      - cp -R src/. "$ARTIFACT_DIR"/
+      - sed -i.bak -e "s|__RELEASE__|$USMS_RELEASE|g" -e "s|__BUILT_AT__|$BUILT_AT|g" "$ARTIFACT_DIR/index.html"
+      - rm -f "$ARTIFACT_DIR/index.html.bak"
+      - |
+        cat > "$ARTIFACT_DIR/build-metadata.json" << META
+        {
+          "service": "$SERVICE_NAME",
+          "release": "$USMS_RELEASE",
+          "builtAt": "$BUILT_AT",
+          "buildId": "${CODEBUILD_BUILD_ID:-local}",
+          "sourceVersion": "${CODEBUILD_RESOLVED_SOURCE_VERSION:-local}"
+        }
+        META
+      - cp config/service.json "$ARTIFACT_DIR/service.json"
+      - |
+        python3 -c "
+        import json, os
+        container = json.load(open('config/service.json'))['container']
+        image_uri = os.environ.get('IMAGE_URI', 'public.ecr.aws/nginx/nginx:stable-alpine')
+        json.dump([{'name': container, 'imageUri': image_uri}], open('$ARTIFACT_DIR/imagedefinitions.json', 'w'))
+        "
+      - cat "$ARTIFACT_DIR/imagedefinitions.json"
+
+  post_build:
+    commands:
+      - echo "--- post_build ---"
+      - bash tests/smoke.sh; echo $? > /tmp/usms-smoke-status
+      - ls -l "$ARTIFACT_DIR"
+      - cat "$ARTIFACT_DIR/build-metadata.json"
+      - test "$(cat /tmp/usms-smoke-status)" -eq 0
+    finally:
+      - echo "--- post_build finally ---"
+      - |
+        printf 'release=%s testsExitStatus=%s generatedAt=%s\n' \
+          "$(tr -d '[:space:]' < VERSION)" "$(cat /tmp/usms-smoke-status 2>/dev/null || echo unknown)" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          > "$ARTIFACT_DIR/build-summary.txt"
+      - cat "$ARTIFACT_DIR/build-summary.txt"
+
+artifacts:
+  base-directory: dist
+  files:
+    - '**/*'
+
+cache:
+  paths: []

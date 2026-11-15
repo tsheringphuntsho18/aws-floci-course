@@ -35,3 +35,4 @@ scripts/capture.py
 CLAUDE.md
 
 .claude 
+labs/lab-11-pipeline/app/dist/
