@@ -59,7 +59,7 @@ source configs/course.env
 | 10  | Lambda   | completed |
 | 11  | CI/CD Pipeline   | completed |
 | 12  | ECS Pipeline Deploy   | completed |
-| 13  | Monitoring   | in progress |
+| 13  | Monitoring   | completed |
 
 
 ## Conventions
