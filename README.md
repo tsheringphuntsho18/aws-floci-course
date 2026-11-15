@@ -56,9 +56,9 @@ source configs/course.env
 | 07  | EKS   | completed |
 | 08  | EKS Scaling   | completed |
 | 09  | Security   | completed |
-| 10  | Lambda   | in progress |
-| 11  | CI/CD Pipeline   | not started |
-| 12  | ECS Pipeline Deploy   | not started |
+| 10  | Lambda   | completed |
+| 11  | CI/CD Pipeline   | completed |
+| 12  | ECS Pipeline Deploy   | in progress |
 | 13  | Monitoring   | not started |
 
 
