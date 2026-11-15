@@ -81,7 +81,7 @@ fi
 hdr "6. Host state directory"
 if [ -d "$FLOCI_HOST_DATA_DIR" ]; then
   ok "$FLOCI_HOST_DATA_DIR exists (size: $(du -sh "$FLOCI_HOST_DATA_DIR" 2>/dev/null | cut -f1))"
-  ls -1 "$FLOCI_HOST_DATA_DIR" 2>/dev/null | head -20 | sed 's/^/           /'
+  ls -1 "$FLOCI_HOST_DATA_DIR" 2>/dev/null | sed 's/^/           /' | head -20 || true
   [ -n "$(ls -A "$FLOCI_HOST_DATA_DIR" 2>/dev/null)" ] || bad "Directory is EMPTY — see checks 2 and 3."
 else
   bad "$FLOCI_HOST_DATA_DIR does not exist."

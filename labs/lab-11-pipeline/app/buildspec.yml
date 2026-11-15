@@ -4,6 +4,7 @@ env:
   variables:
     SERVICE_NAME: "enrolment"
     ARTIFACT_DIR: "dist"
+    IMAGE_REPO_URI: "nginx"
 
 phases:
 
@@ -11,6 +12,7 @@ phases:
     commands:
       - echo "--- install ---"
       - python3 --version
+      - docker --version || echo "no docker client in this build image"
       - sed --version 2>/dev/null | head -1 || echo "BSD sed"
 
   pre_build:
@@ -34,6 +36,16 @@ phases:
           exit 1
         }
       - echo "configuration validated"
+      - |
+        if docker info >/dev/null 2>&1; then
+          echo "docker daemon reachable - this build will build and push an image"
+          aws ecr get-login-password --region "${AWS_REGION_COURSE:-us-east-1}" \
+            | docker login --username AWS --password-stdin "${IMAGE_REPO_URI%%/*}" \
+            || echo "docker login failed - continuing; the image must already exist"
+        else
+          echo "no docker daemon in this build container - skipping the image build"
+          echo "the image must already exist at ${IMAGE_REPO_URI} with this release tag"
+        fi
 
   build:
     commands:
@@ -53,15 +65,22 @@ phases:
           "release": "$USMS_RELEASE",
           "builtAt": "$BUILT_AT",
           "buildId": "${CODEBUILD_BUILD_ID:-local}",
-          "sourceVersion": "${CODEBUILD_RESOLVED_SOURCE_VERSION:-local}"
+          "sourceVersion": "${CODEBUILD_RESOLVED_SOURCE_VERSION:-local}",
+          "imageUri": "${IMAGE_REPO_URI}:$USMS_RELEASE"
         }
         META
       - cp config/service.json "$ARTIFACT_DIR/service.json"
       - |
-        python3 -c "
+        if docker info >/dev/null 2>&1; then
+          docker build --provenance=false --sbom=false -t "${IMAGE_REPO_URI}:$USMS_RELEASE" .
+          timeout 25 docker push "${IMAGE_REPO_URI}:$USMS_RELEASE" \
+            || echo "push failed or timed out - see Section 10; this build's ECR data plane hangs at the final manifest commit, so the deploy stage will use the local image tag"
+        fi
+      - |
+        IMAGE_URI="${IMAGE_REPO_URI}:$USMS_RELEASE" python3 -c "
         import json, os
         container = json.load(open('config/service.json'))['container']
-        image_uri = os.environ.get('IMAGE_URI', 'public.ecr.aws/nginx/nginx:stable-alpine')
+        image_uri = os.environ['IMAGE_URI']
         json.dump([{'name': container, 'imageUri': image_uri}], open('$ARTIFACT_DIR/imagedefinitions.json', 'w'))
         "
       - cat "$ARTIFACT_DIR/imagedefinitions.json"
