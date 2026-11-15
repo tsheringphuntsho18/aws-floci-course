@@ -58,8 +58,8 @@ source configs/course.env
 | 09  | Security   | completed |
 | 10  | Lambda   | completed |
 | 11  | CI/CD Pipeline   | completed |
-| 12  | ECS Pipeline Deploy   | in progress |
-| 13  | Monitoring   | not started |
+| 12  | ECS Pipeline Deploy   | completed |
+| 13  | Monitoring   | in progress |
 
 
 ## Conventions
