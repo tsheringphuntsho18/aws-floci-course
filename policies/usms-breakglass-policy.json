@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SuspendOrResumeEnrolmentScaling",
+      "Effect": "Allow",
+      "Action": [
+        "application-autoscaling:RegisterScalableTarget",
+        "application-autoscaling:DescribeScalableTargets",
+        "application-autoscaling:DescribeScalingPolicies",
+        "application-autoscaling:DescribeScalingActivities"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

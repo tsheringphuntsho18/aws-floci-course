@@ -1,0 +1,68 @@
+[
+  {
+    "IpProtocol": "tcp",
+    "FromPort": 443,
+    "ToPort": 443,
+    "PrefixListIds": [
+      {
+        "PrefixListId": "pl-63a5400a",
+        "Description": "S3 via the Lab 02 gateway endpoint - Lab 10's transcripts"
+      }
+    ]
+  },
+  {
+    "IpProtocol": "tcp",
+    "FromPort": 443,
+    "ToPort": 443,
+    "IpRanges": [
+      {
+        "CidrIp": "0.0.0.0/0",
+        "Description": "HTTPS to AWS service endpoints, including STS for the instance profile - no interface endpoint on this build"
+      }
+    ]
+  },
+  {
+    "IpProtocol": "tcp",
+    "FromPort": 80,
+    "ToPort": 80,
+    "UserIdGroupPairs": [
+      {
+        "GroupId": "sg-dfbab558544cb59ff",
+        "Description": "The enrolment API, through the Lab 05 load balancer - not the tasks directly"
+      }
+    ]
+  },
+  {
+    "IpProtocol": "tcp",
+    "FromPort": 5432,
+    "ToPort": 5432,
+    "UserIdGroupPairs": [
+      {
+        "GroupId": "sg-63219659d1f806b28",
+        "Description": "PostgreSQL to the database tier"
+      }
+    ]
+  },
+  {
+    "IpProtocol": "udp",
+    "FromPort": 53,
+    "ToPort": 53,
+    "IpRanges": [
+      {
+        "CidrIp": "10.0.0.2/32",
+        "Description": "DNS to the VPC's own resolver (the base network address + 2) - UDP first, the common case"
+      }
+    ]
+  },
+  {
+    "IpProtocol": "tcp",
+    "FromPort": 53,
+    "ToPort": 53,
+    "IpRanges": [
+      {
+        "CidrIp": "10.0.0.2/32",
+        "Description": "DNS to the VPC's own resolver - TCP fallback for answers too large for one UDP datagram"
+      }
+    ]
+  }
+]

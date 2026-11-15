@@ -1,0 +1,10 @@
+{
+  "accepted": [
+    {
+      "role": "usms-ec2-app-role",
+      "finding": "trust policy: service principal ec2.amazonaws.com with NO Condition (confused deputy)",
+      "reason": "EC2 does not send aws:SourceAccount or aws:SourceArn when an instance profile assumes a role on an instance's behalf, so the aws:SourceAccount/aws:SourceArn condition that fixes usms-ecs-task-role, usms-transcripts-reader-role, usms-ecs-exec-role and usms-lambda-exec-role has no equivalent for EC2 instance profiles. AWS's own cross-service confused deputy guidance for EC2 instance roles does not offer a trust-policy condition for this case.",
+      "compensating_control": "IMDSv2 required with HttpPutResponseHopLimit=1 on usms-web-01 (Lab 09 Step 11). This does not fix the trust policy, but it closes the practical exploitation path: the confused-deputy risk for an EC2 instance role is realised through an SSRF bug reaching the instance metadata service, and IMDSv2's token requirement defeats exactly that path."
+    }
+  ]
+}
